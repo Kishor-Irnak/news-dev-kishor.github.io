@@ -1,22 +1,66 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const cachedNews = localStorage.getItem('cachedNews');
-    if (cachedNews) {
-      displayNews(JSON.parse(cachedNews));
-    } else {
-      getNews();
-    }
+    // Display default news (general category) upon page load
+    getNews('general');
+  
+    const businessBtn = document.getElementById('business-btn');
+    const entertainmentBtn = document.getElementById('entertainment-btn');
+    const healthBtn = document.getElementById('health-btn');
+    const scienceBtn = document.getElementById('science-btn');
+    const sportsBtn = document.getElementById('sports-btn');
+    const technologyBtn = document.getElementById('technology-btn');
+  
+    businessBtn.addEventListener('click', () => getNews('business'));
+    entertainmentBtn.addEventListener('click', () => getNews('entertainment'));
+    healthBtn.addEventListener('click', () => getNews('health'));
+    scienceBtn.addEventListener('click', () => getNews('science'));
+    sportsBtn.addEventListener('click', () => getNews('sports'));
+    technologyBtn.addEventListener('click', () => getNews('technology'));
   });
   
-  function getNews() {
-    const url = 'https://newsapi.org/v2/top-headlines?country=us&apiKey=47942b307f5542298263499d07d8345f';
-    
+  function getNews(category) {
+    let url = '';
+    switch (category) {
+      case 'general':
+        url = 'https://newsapi.org/v2/top-headlines?country=in&apiKey=47942b307f5542298263499d07d8345f';
+        break;
+      case 'business':
+        url = 'https://newsapi.org/v2/top-headlines?country=in&category=business&apiKey=47942b307f5542298263499d07d8345f';
+        break;
+      case 'entertainment':
+        url = 'https://newsapi.org/v2/top-headlines?country=in&category=entertainment&apiKey=47942b307f5542298263499d07d8345f';
+        break;
+      case 'health':
+        url = 'https://newsapi.org/v2/top-headlines?country=in&category=health&apiKey=47942b307f5542298263499d07d8345f';
+        break;
+      case 'science':
+        url = 'https://newsapi.org/v2/top-headlines?country=in&category=science&apiKey=47942b307f5542298263499d07d8345f';
+        break;
+      case 'sports':
+        url = 'https://newsapi.org/v2/top-headlines?country=in&category=sports&apiKey=47942b307f5542298263499d07d8345f';
+        break;
+      case 'technology':
+        url = 'https://newsapi.org/v2/top-headlines?country=in&category=technology&apiKey=47942b307f5542298263499d07d8345f';
+        break;
+      default:
+        console.error('Invalid category');
+        return;
+    }
+  
+    fetchNews(url);
+  }
+  
+  function fetchNews(url) {
     fetch(url)
-      .then(response => response.json())
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        return response.json();
+      })
       .then(data => {
-        localStorage.setItem('cachedNews', JSON.stringify(data.articles));
         displayNews(data.articles);
       })
-      .catch(error => console.log('Error fetching news:', error));
+      .catch(error => console.error('Error fetching news:', error));
   }
   
   function displayNews(articles) {
